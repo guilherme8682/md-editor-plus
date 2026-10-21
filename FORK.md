@@ -23,7 +23,7 @@ O código fica fora do vault do Life OS. O histórico e as alterações do plugi
 
 A necessidade que motivou a avaliação do fork foi a integração visual com o tema personalizado do VS Code. A sincronização de tema da extensão original acompanha o modo claro/escuro; ela não herda toda a paleta personalizada do editor.
 
-Neste início foram preparados o fork, os remotes e a documentação. As customizações funcionais e visuais serão definidas nos próximos pedidos. Ainda não foi gerada nem instalada uma versão personalizada.
+A primeira customização removeu as paletas próprias e os controles de tema. O documento herda `editor.background` e `editor.foreground`; menus e campos usam seus tokens correspondentes do VS Code. A barra lateral pode continuar clara enquanto o editor central é escuro. Mudanças de paleta são aplicadas ao vivo, incluindo diagramas já abertos.
 
 ## Desenvolvimento
 
@@ -36,9 +36,9 @@ npm test -- --runInBand
 npm run package
 ```
 
-`npm run package` gera o pacote `.vsix` para instalação local no VS Code. A preparação inicial do fork não executou instalação de dependências, build nem testes do código.
+`npm run package` gera o pacote `.vsix` para instalação local no VS Code. Para conferir também os tipos do webview, execute `npx tsc --project tsconfig.webview.json --rootDir src --noEmit`. O `--rootDir src` inclui o módulo compartilhado de imagens importado pelo webview.
 
-Antes de distribuir ou instalar a primeira versão personalizada, defina identidade própria para a extensão, seus comandos e configurações, evitando colisões com a versão original.
+A versão personalizada usa a identidade `guilherme8682.md-editor-plus-lifeos`, o editor `md-editor-plus-lifeos.editor` e configurações/comandos com prefixo `mdEditorPlusLifeos`. Pacotes `.vsix` têm versão própria, sem colisão com a extensão original.
 
 ## Manutenção
 

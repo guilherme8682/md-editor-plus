@@ -1,6 +1,6 @@
 # MD Editor Plus
 
-> **Fork mantido por Guilherme Rocha:** base para customizações pessoais do editor Markdown no VS Code. Consulte [FORK.md](FORK.md) para propósito, origem e orientações de desenvolvimento. O projeto original é [aviranrevach/md-editor-plus](https://github.com/aviranrevach/md-editor-plus).
+> **Fork mantido por Guilherme Rocha:** base para customizações pessoais do editor Markdown no VS Code. A versão Life OS herda automaticamente as cores do editor central, dos menus e dos campos do VS Code. Consulte [FORK.md](FORK.md) para propósito, origem e orientações de desenvolvimento. O projeto original é [aviranrevach/md-editor-plus](https://github.com/aviranrevach/md-editor-plus).
 
 **Notion-style markdown block editor / viewer for Visual Studio Code, Cursor etc.**
 
@@ -67,12 +67,12 @@ From the ⋯ actions menu, **Create blocks skill…** generates a reusable **Cla
 
 ### Display settings (Aa panel)
 
-- **Four themes** — Light, Claude, Sepia, Dark — plus a **Sync with** selector (Off / OS / IDE) that follows your system or editor's light/dark mode
+- **Native VS Code palette** — central editor colors for documents and code; host menu/input colors for controls. Updates live without a theme selector.
 - **RTL aware** — Hebrew/Arabic content auto-detected per block; lists keep all bullets on the title side, Markdown stays plain on disk
 - **Page width slider** — magnetic snap stops at 600 / 800 / 1000 / 1200 / 1400 px, or full-window override
 - **Text size** — S / M / L / XL with live "quick brown fox" tooltip previews
 - **Font family** — Sans / Serif / Mono with live previews
-- **Code-block toggles** — force-dark snippets, force-dark source view, full-width source, auto-collapse long blocks
+- **Code-block options** — full-width source and auto-collapse long blocks; colors always follow the host.
 - **Save view as default** — persist every setting to User-scope VS Code settings; **Reset** restores built-ins
 
 ### Markdown fidelity
@@ -119,9 +119,9 @@ MDX content is rendered as Markdown; embedded JSX falls into raw paragraphs (or 
 2. Open any `.md` file. It appears in the block view by default.
 3. Press `⌘/` (`Ctrl+/` on Windows/Linux) anywhere to insert a new block.
 4. Hover any block to grab its drag handle (`⠿`) and reorder it.
-5. Need raw Markdown? Click the **Code** segment in the toolbar, or run **MD Editor Plus: Open Source View** from the Command Palette.
+5. Need raw Markdown? Click the **Code** segment in the toolbar, or run **MD Editor Plus — Life OS: Open Source View** from the Command Palette.
 
-To switch a single file back to VS Code's default editor, run **MD Editor Plus: Open Source View** or use **Reopen Editor With…** from the editor's title bar.
+To switch a single file back to VS Code's default editor, run **MD Editor Plus — Life OS: Open Source View** or use **Reopen Editor With…** from the editor's title bar.
 
 ---
 
@@ -138,7 +138,7 @@ The toolbar fades to 50% opacity when your cursor isn't near it, so it stays out
 | **Outline** | **Click** to toggle the heading outline tree (also ⌘⇧O). |
 | **Structure map** | **Click** to toggle the right-edge navigation rail — heading ticks plus a draggable viewport box. |
 | **Filename** | Centered. **Hover** to open the actions menu (Copy, Duplicate, etc.). The full name shows in a native tooltip when truncated. |
-| **Aa** | **Click** to open the display-settings panel (theme, page width, font, code-block options). |
+| **Aa** | **Click** to open the display-settings panel (page width, font, code-block options). |
 | **⋯** | **Click** to open the actions menu, anchored to the top-right. |
 
 Filename hover and ⋯ click open the same actions list, but each anchors its own panel. They are independent surfaces, so the hover behavior never accidentally triggers the click target and vice versa.
@@ -149,28 +149,9 @@ Filename hover and ⋯ click open the same actions list, but each anchors its ow
 
 ![Display settings panel](media/visual-settings.png)Every visual setting is **runtime-only by default**. Change anything you like for the current session and it won't follow you to other files. Click **Save view as default** at the bottom to commit the current view as your global default; **Reset** clears your saved defaults and restores the built-in ones.
 
-### Theme
+### Cores do ambiente
 
-Four hand-tuned themes:
-
-| Theme | Vibe |
-| --- | --- |
-| **Light** | Notion's classic clean white background |
-| **Claude** | Soft warm tones inspired by Claude.ai |
-| **Sepia** | Paper-warm, easy on long reading sessions |
-| **Dark** | Deep neutrals, comfortable at night |
-
-Hover any theme button for a live color-swatch preview.
-
-Below the theme buttons, the **Sync with** row offers three modes:
-
-| Mode | Behavior |
-| --- | --- |
-| **Off** | Use the manually selected theme above. |
-| **OS** | Follow the operating system's light/dark mode (`prefers-color-scheme`). Updates live. |
-| **IDE** | Follow the host editor's color theme (light vs dark). Picks up theme switches in real time. |
-
-Picking any of the four manual themes automatically flips Sync back to **Off**.
+As cores são herdadas automaticamente do VS Code, sem seletores de tema. A página usa `editor.background` e `editor.foreground`; menus, campos e demais componentes usam os tokens correspondentes do ambiente. A barra lateral pode continuar clara enquanto a área central usa uma paleta escura. Alterações da paleta se refletem ao vivo, inclusive nos diagramas.
 
 ### Page width
 
@@ -191,22 +172,20 @@ A continuous slider with **magnetic snap stops** at 600 / 800 / 1000 / 1200 / 14
 
 ### Code blocks
 
-Four toggles for the developer-leaning bits:
+Options for source layout and long snippets:
 
 | Toggle | Effect |
 | --- | --- |
-| **Always dark: Code Snippets** | Force fenced code blocks to use a dark background even when the page theme is light. Editing a doc on a light theme but want IDE-style code? This. |
-| **Always dark: Code view** | Same idea, but for the raw Markdown source view. |
 | **Full width: Only in Code view** | Source view fills the window even when the rendered view stays narrow. Great for diff-friendly long lines. |
 | **Shorten Code Snippets** | Long code blocks collapse to a preview with a **Show more / Show less** button. |
 
 ### Save view as default
 
-Captures every visible setting (theme, font, text size, page width, full-width, all four code-block toggles) and writes them to your **User-scope** VS Code settings. They follow you across every project from now on. The button is disabled when the current view already matches what's saved.
+Captures every visible setting (font, text size, page width, full-width and code-block layout options) and writes them to your **User-scope** VS Code settings. They follow you across every project from now on. The button is disabled when the current view already matches what's saved.
 
 ### Reset
 
-Clears the saved defaults and restores the built-in ones (Light theme, Sans font, Medium text, 800 px page, all toggles off). Disabled when nothing has been customized.
+Clears the saved defaults and restores the built-in ones (host colors, Sans font, Medium text, 800 px page, all toggles off). Disabled when nothing has been customized.
 
 ---
 
@@ -402,7 +381,7 @@ The bubble menu shows the relevant shortcut next to each button.
 
 ## Tooltips
 
-Every interactive control has a custom tooltip. Text-only for buttons, **rich previews** where useful (theme color swatches, text-size and font samples, slider stop labels). Tooltips appear after a 350 ms hover delay, flip above/below the target depending on screen edge, and dismiss on scroll, click, blur, or `Esc`.
+Every interactive control has a custom tooltip. Text-only for buttons, **rich previews** where useful (text-size and font samples, slider stop labels). Tooltips appear after a 350 ms hover delay, flip above/below the target depending on screen edge, and dismiss on scroll, click, blur, or `Esc`.
 
 ---
 
@@ -412,26 +391,23 @@ Available via the Command Palette (`⌘⇧P` / `Ctrl+Shift+P`):
 
 | Command | Description |
 | --- | --- |
-| **MD Editor Plus: Open Block View** | Reopens the active file with the block editor |
-| **MD Editor Plus: Open Source View** | Reopens the active file with VS Code's default text editor |
+| **MD Editor Plus — Life OS: Open Block View** | Reopens the active file with the block editor |
+| **MD Editor Plus — Life OS: Open Source View** | Reopens the active file with VS Code's default text editor |
 
 ---
 
 ## Settings reference
 
-All settings live under `mdEditorPlus.*` in your User or Workspace settings. They're written by the **Save view as default** button, but you can edit them by hand if you prefer.
+All settings live under `mdEditorPlusLifeos.*` in your User or Workspace settings. They're written by the **Save view as default** button, but you can edit them by hand if you prefer.
 
 | Setting | Type | Default | Description |
 | --- | --- | --- | --- |
-| `mdEditorPlus.theme` | `"auto"` | `"light"` | `"sepia"` |
-| `mdEditorPlus.font` | `"sans"` | `"serif"` | `"mono"` |
-| `mdEditorPlus.textSize` | `"s"` | `"m"` | `"l"` |
-| `mdEditorPlus.pageWidth` | `number` (400 to 2400) | `800` | Default page width in px |
-| `mdEditorPlus.fullWidth` | `boolean` | `false` | Open in full-window-width by default |
-| `mdEditorPlus.alwaysDarkCode` | `boolean` | `false` | Force dark code blocks regardless of page theme |
-| `mdEditorPlus.alwaysDarkSource` | `boolean` | `false` | Force dark source view regardless of page theme |
-| `mdEditorPlus.sourceFullWidth` | `boolean` | `false` | Render source view at full width even when the page is narrow |
-| `mdEditorPlus.shortenCodeSnippets` | `boolean` | `false` | Collapse long code snippets behind a Show more button |
+| `mdEditorPlusLifeos.font` | `"sans"` | `"serif"` | `"mono"` |
+| `mdEditorPlusLifeos.textSize` | `"s"` | `"m"` | `"l"` |
+| `mdEditorPlusLifeos.pageWidth` | `number` (400 to 2400) | `800` | Default page width in px |
+| `mdEditorPlusLifeos.fullWidth` | `boolean` | `false` | Open in full-window-width by default |
+| `mdEditorPlusLifeos.sourceFullWidth` | `boolean` | `false` | Render source view at full width even when the page is narrow |
+| `mdEditorPlusLifeos.shortenCodeSnippets` | `boolean` | `false` | Collapse long code snippets behind a Show more button |
 
 ---
 

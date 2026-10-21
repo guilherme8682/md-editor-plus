@@ -7,9 +7,8 @@
 // parse — and the cache avoids re-rendering on theme flips.
 
 import mermaid from 'mermaid';
-import { currentResolvedTheme, subscribeThemeChanges, Resolved } from './theme';
+import { readHostPalette, subscribeThemeChanges } from './theme';
 
-export type DiagramTheme = Resolved;
 
 export type RenderOk     = { ok: true;  svg: string };
 export type RenderErr    = { ok: false; message: string; line?: number };
@@ -30,102 +29,44 @@ interface ThemeVarSet {
   noteTextColor:    string;
 }
 
-export const THEME_VARS: Record<DiagramTheme, ThemeVarSet> = {
-  light: {
-    background:       '#ffffff',
-    primaryColor:     '#dbeafe',
-    primaryTextColor: '#1a1a1a',
-    primaryBorderColor: '#6366f1',
-    secondaryColor:   '#ecfeff',
-    tertiaryColor:    '#f0fdf4',
-    lineColor:        '#4b5563',
-    textColor:        '#1a1a1a',
-    mainBkg:          '#dbeafe',
-    clusterBkg:       '#f5f5f7',
-    noteBkgColor:     '#fff8c5',
-    noteTextColor:    '#9a6700',
-  },
-  claude: {
-    background:       '#fdf6e3',
-    primaryColor:     '#fef3c7',
-    primaryTextColor: '#451a03',
-    primaryBorderColor: '#b45309',
-    secondaryColor:   '#fee9c7',
-    tertiaryColor:    '#fbe9d6',
-    lineColor:        '#92400e',
-    textColor:        '#451a03',
-    mainBkg:          '#fef3c7',
-    clusterBkg:       '#f8eccf',
-    noteBkgColor:     '#fef7d6',
-    noteTextColor:    '#7c3a04',
-  },
-  sepia: {
-    background:       '#f7f1e3',
-    primaryColor:     '#ede4cf',
-    primaryTextColor: '#3b3a30',
-    primaryBorderColor: '#9b6f46',
-    secondaryColor:   '#e8ddc4',
-    tertiaryColor:    '#e1d6b8',
-    lineColor:        '#6b5a3e',
-    textColor:        '#3b3a30',
-    mainBkg:          '#ede4cf',
-    clusterBkg:       '#e8ddc4',
-    noteBkgColor:     '#f0e5cb',
-    noteTextColor:    '#594a2e',
-  },
-  dark: {
-    background:       '#1c1c1f',
-    primaryColor:     '#27272a',
-    primaryTextColor: '#f4f4f5',
-    primaryBorderColor: '#a5b4fc',
-    secondaryColor:   '#3f3f46',
-    tertiaryColor:    '#52525b',
-    lineColor:        '#9ca3af',
-    textColor:        '#f4f4f5',
-    mainBkg:          '#27272a',
-    clusterBkg:       '#3f3f46',
-    noteBkgColor:     '#3f2e15',
-    noteTextColor:    '#fde68a',
-  },
-};
+/** Diagram fills, labels and edges inherit the central editor's current palette. */
+export function getDiagramThemeVariables(): ThemeVarSet {
+  const p = readHostPalette();
+  return {
+    background: p.background,
+    primaryColor: p.surface,
+    primaryTextColor: p.foreground,
+    primaryBorderColor: p.accent,
+    secondaryColor: p.surface,
+    tertiaryColor: p.background,
+    lineColor: p.foreground,
+    textColor: p.foreground,
+    mainBkg: p.surface,
+    clusterBkg: p.background,
+    noteBkgColor: p.surface,
+    noteTextColor: p.foreground,
+  };
+}
 
-let _initialized = false;
-let _alwaysDark = false;
+let initializedPalette = '';
 const _cache = new Map<string, string>();
 const MAX_CACHE = 64;
 
-function initMermaid(theme: DiagramTheme): void {
+function initMermaid(palette: ThemeVarSet): void {
   mermaid.initialize({
-    startOnLoad:    false,
-    securityLevel:  'strict',
-    theme:          'base',
-    themeVariables: THEME_VARS[theme],
-    fontFamily:     'ui-sans-serif, Inter, -apple-system, sans-serif',
+    startOnLoad: false,
+    securityLevel: 'strict',
+    theme: 'base',
+    themeVariables: palette,
+    fontFamily: getComputedStyle(document.body).getPropertyValue('--vscode-font-family') || 'system-ui, sans-serif',
   });
-  _initialized = true;
-}
-
-function effectiveTheme(): DiagramTheme {
-  return _alwaysDark ? 'dark' : currentResolvedTheme();
-}
-
-/** Called by index.ts when the user flips the Aa-panel toggle. */
-export function setAlwaysDarkDiagram(on: boolean): void {
-  if (_alwaysDark === on) return;
-  _alwaysDark = on;
-  // Wipe the cache — the same source now belongs to a different theme key.
-  _cache.clear();
-  dispatchThemeChange();
-}
-
-export function isAlwaysDarkDiagram(): boolean {
-  return _alwaysDark;
+  initializedPalette = JSON.stringify(palette);
 }
 
 function dispatchThemeChange(): void {
-  // Re-init mermaid with the new themeVariables, then let blocks re-render.
-  initMermaid(effectiveTheme());
-  document.dispatchEvent(new CustomEvent('mermaid-theme-changed', { detail: { theme: effectiveTheme() } }));
+  _cache.clear();
+  initializedPalette = '';
+  document.dispatchEvent(new CustomEvent('mermaid-theme-changed'));
 }
 
 // One-time wiring: any time the editor theme flips, broadcast to blocks.
@@ -179,13 +120,14 @@ function hash(s: string): string {
 
 export function renderMermaid(source: string): Promise<RenderResult> {
   ensureThemeSubscription();
-  const theme = effectiveTheme();
-  const cacheKey = `${theme}::${hash(source)}`;
+  const palette = getDiagramThemeVariables();
+  const paletteKey = JSON.stringify(palette);
+  const cacheKey = `${paletteKey}::${hash(source)}`;
   const cached = _cache.get(cacheKey);
   if (cached) return Promise.resolve({ ok: true, svg: cached });
 
   return enqueue(async () => {
-    if (!_initialized) initMermaid(theme);
+    if (initializedPalette !== paletteKey) initMermaid(palette);
     try {
       const { svg } = await mermaid.render(nextId(), source);
       // LRU-ish: evict the oldest entry if we hit capacity.

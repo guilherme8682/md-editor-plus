@@ -1,0 +1,141 @@
+/* Central-editor colors, paired with their foregrounds. The sidebar can use
+   an entirely different (light) palette in hybrid VS Code themes. */
+body {
+  --bg: var(--vscode-editor-background, Canvas);
+  --text-primary: var(--vscode-editor-foreground, var(--vscode-foreground, CanvasText));
+  --text-secondary: color-mix(in srgb, var(--text-primary) 72%, var(--bg));
+  --bg-secondary: color-mix(in srgb, var(--text-primary) 6%, var(--bg));
+  --border: var(--vscode-widget-border, var(--vscode-panel-border, color-mix(in srgb, var(--text-primary) 20%, var(--bg))));
+  --block-hover: var(--vscode-list-hoverBackground, var(--bg-secondary));
+  --link: var(--vscode-textLink-foreground, var(--text-primary));
+  --accent: var(--vscode-focusBorder, var(--link));
+  --on-accent: var(--vscode-button-foreground, var(--bg));
+  --selection: var(--vscode-editor-selectionBackground, var(--block-hover));
+  --danger: var(--vscode-errorForeground, var(--text-primary));
+  --warning: var(--vscode-editorWarning-foreground, var(--text-primary));
+  --success: var(--vscode-testing-iconPassed, var(--text-primary));
+  --shadow: var(--vscode-widget-shadow, transparent);
+  --focus: var(--vscode-focusBorder, var(--text-primary));
+  --callout-bg: var(--bg-secondary);
+  --callout-border: var(--border);
+  --callout-note-accent: var(--vscode-editorInfo-foreground, var(--link));
+  --callout-tip-accent: var(--success);
+  --callout-important-accent: var(--accent);
+  --callout-warning-accent: var(--warning);
+  --callout-caution-accent: var(--danger);
+  --callout-note-bg: color-mix(in srgb, var(--callout-note-accent) 10%, var(--bg));
+  --callout-tip-bg: color-mix(in srgb, var(--callout-tip-accent) 10%, var(--bg));
+  --callout-important-bg: color-mix(in srgb, var(--callout-important-accent) 10%, var(--bg));
+  --callout-warning-bg: color-mix(in srgb, var(--callout-warning-accent) 10%, var(--bg));
+  --callout-caution-bg: color-mix(in srgb, var(--callout-caution-accent) 10%, var(--bg));
+  --callout-note-border: var(--callout-note-accent);
+  --callout-tip-border: var(--callout-tip-accent);
+  --callout-important-border: var(--callout-important-accent);
+  --callout-warning-border: var(--callout-warning-accent);
+  --callout-caution-border: var(--callout-caution-accent);
+  --code-bg: var(--vscode-editor-background, var(--bg-secondary));
+  --code-fg: var(--vscode-editor-foreground, var(--text-primary));
+  --code-text: var(--code-fg);
+  --table-header-bg: var(--bg-secondary);
+  --table-border: var(--border);
+  --blockquote-border: var(--vscode-textBlockQuote-border, var(--border));
+  --checkbox-checked: var(--vscode-checkbox-selectBorder, var(--accent));
+  --toolbar-bg: var(--bg);
+  --toolbar-border: var(--border);
+  --toolbar-btn-hover: var(--block-hover);
+  --toolbar-fg-muted: var(--text-secondary);
+  --save-ok: var(--success);
+  --save-warn: var(--warning);
+  --save-danger: var(--danger);
+  --seg-bg: var(--bg-secondary);
+  --seg-active-bg: var(--bg);
+  --seg-active-shadow: 0 1px 3px var(--shadow);
+  --font-body: var(--vscode-font-family, system-ui, sans-serif);
+  --font-heading: var(--font-body);
+  --font-mono: var(--vscode-editor-font-family, monospace);
+  --font-board: var(--font-body);
+  --code-header-bg: var(--code-bg);
+  --code-gutter-bg: var(--code-bg);
+  --code-gutter-fg: var(--vscode-editorLineNumber-foreground, var(--code-fg));
+  --code-border: var(--border);
+  --code-copy-bg: var(--code-bg);
+  --code-copy-fg: var(--code-fg);
+  --board-text: var(--text-primary);
+  --board-text-light: var(--text-secondary);
+  --board-text-muted: var(--text-secondary);
+  --board-border-soft: var(--border);
+  --board-border: var(--border);
+  --board-bg-col: var(--bg-secondary);
+  --board-bg-card: var(--bg);
+  --board-bg-card-hover: var(--block-hover);
+  --board-hover: var(--block-hover);
+  --board-chip-gray-dot: var(--text-secondary);
+  --board-chip-blue-dot: var(--vscode-charts-blue, var(--link));
+  --board-chip-green-dot: var(--vscode-charts-green, var(--success));
+  --board-chip-amber-dot: var(--vscode-charts-yellow, var(--warning));
+  --board-chip-red-dot: var(--vscode-charts-red, var(--danger));
+  --board-chip-purple-dot: var(--vscode-charts-purple, var(--accent));
+  --board-chip-orange-dot: var(--vscode-charts-orange, var(--warning));
+  --board-chip-teal-dot: var(--vscode-charts-blue, var(--link));
+  --board-chip-indigo-dot: var(--vscode-charts-purple, var(--accent));
+  --board-chip-pink-dot: var(--vscode-charts-purple, var(--accent));
+  --board-chip-gray-fg: var(--text-primary);
+  --board-chip-gray-bg: color-mix(in srgb, var(--board-chip-gray-dot) 18%, var(--bg));
+  --board-chip-blue-fg: var(--text-primary);
+  --board-chip-blue-bg: color-mix(in srgb, var(--board-chip-blue-dot) 18%, var(--bg));
+  --board-chip-green-fg: var(--text-primary);
+  --board-chip-green-bg: color-mix(in srgb, var(--board-chip-green-dot) 18%, var(--bg));
+  --board-chip-amber-fg: var(--text-primary);
+  --board-chip-amber-bg: color-mix(in srgb, var(--board-chip-amber-dot) 18%, var(--bg));
+  --board-chip-red-fg: var(--text-primary);
+  --board-chip-red-bg: color-mix(in srgb, var(--board-chip-red-dot) 18%, var(--bg));
+  --board-chip-purple-fg: var(--text-primary);
+  --board-chip-purple-bg: color-mix(in srgb, var(--board-chip-purple-dot) 18%, var(--bg));
+  --board-chip-orange-fg: var(--text-primary);
+  --board-chip-orange-bg: color-mix(in srgb, var(--board-chip-orange-dot) 18%, var(--bg));
+  --board-chip-teal-fg: var(--text-primary);
+  --board-chip-teal-bg: color-mix(in srgb, var(--board-chip-teal-dot) 18%, var(--bg));
+  --board-chip-indigo-fg: var(--text-primary);
+  --board-chip-indigo-bg: color-mix(in srgb, var(--board-chip-indigo-dot) 18%, var(--bg));
+  --board-chip-pink-fg: var(--text-primary);
+  --board-chip-pink-bg: color-mix(in srgb, var(--board-chip-pink-dot) 18%, var(--bg));
+  --rail-bg: var(--bg-secondary);
+  --muted: var(--text-secondary);
+}
+
+::selection { background: var(--selection); }
+:is(button, input, select, textarea):focus-visible { outline: 1px solid var(--focus); outline-offset: 2px; }
+
+/* Popovers are opaque and use their host surface's foreground. */
+:is(.settings-panel, .actions-panel, .actions-submenu, .block-picker,
+    .block-picker-flyout, .callout-menu, .bubble-menu, .bubble-into,
+    .bm-swatch-panel, .link-pop, .cb-link-pop, .board-format-toolbar,
+    .bd-column-menu, .bd-tags-picker) {
+  --bg: var(--vscode-menu-background, var(--vscode-editorWidget-background, Canvas));
+  --text-primary: var(--vscode-menu-foreground, var(--vscode-editorWidget-foreground, CanvasText));
+  --text-secondary: color-mix(in srgb, var(--text-primary) 72%, var(--bg));
+  --block-hover: var(--vscode-menu-selectionBackground, var(--bg-secondary));
+  background: var(--bg);
+  color: var(--text-primary);
+  border-color: var(--border);
+  box-shadow: 0 4px 16px var(--shadow);
+}
+:is(input, textarea, select) { color: var(--vscode-input-foreground, var(--text-primary)); caret-color: currentColor; }
+:is(input, textarea)::placeholder { color: var(--vscode-input-placeholderForeground, var(--text-secondary)); }
+select option { background: var(--vscode-dropdown-background, var(--bg)); color: var(--vscode-dropdown-foreground, var(--text-primary)); }
+.ProseMirror .cb-content, .ProseMirror .cb-content code,
+#source-view .cb-content, #source-view .cb-content code { color: var(--code-fg); }
+:is(.ProseMirror, #source-view) [class*="hljs-"] { color: var(--code-fg); }
+:is(.ProseMirror, #source-view) :is(.hljs-keyword, .hljs-tag, .hljs-section) { font-weight: 600; }
+:is(.ProseMirror, #source-view) :is(.hljs-comment, .hljs-quote) { font-style: italic; opacity: 0.7; }
+.search-match, ::highlight(md-board-search) { background: var(--vscode-editor-findMatchHighlightBackground, var(--selection)); }
+.search-match-active, ::highlight(md-board-search-active) { background: var(--vscode-editor-findMatch-background, var(--selection)); outline-color: var(--focus); }
+.find-bar { background: var(--vscode-editorWidget-background, var(--bg)); color: var(--vscode-editorWidget-foreground, var(--text-primary)); }
+
+/* Use host-owned syntax accents where exposed; fall back to code foreground. */
+:is(.ProseMirror, #source-view) :is(.hljs-keyword, .hljs-tag, .hljs-section) { color: var(--vscode-symbolIcon-keywordForeground, var(--code-fg)); }
+:is(.ProseMirror, #source-view) :is(.hljs-string, .hljs-code, .hljs-attr) { color: var(--vscode-symbolIcon-stringForeground, var(--code-fg)); }
+:is(.ProseMirror, #source-view) :is(.hljs-number, .hljs-literal) { color: var(--vscode-symbolIcon-numberForeground, var(--code-fg)); }
+:is(.ProseMirror, #source-view) :is(.hljs-title, .hljs-built_in) { color: var(--vscode-symbolIcon-functionForeground, var(--code-fg)); }
+.toggle-switch.on::after, .settings-defaults-btn.primary, .seg-premium-badge { color: var(--on-accent); }
+.toggle-switch.on::after { background: var(--on-accent); }

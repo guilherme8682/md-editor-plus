@@ -1,95 +1,76 @@
-export type ThemeSetting =
-  | 'light'
-  | 'dark'
-  | 'sepia'
-  | 'claude'
-  | 'sync-os'
-  | 'sync-ide'
-  | 'auto'; // legacy alias for sync-ide
+/** VS Code owns the palette. No editor theme, OS preference or stored override. */
+export type Resolved = 'light' | 'dark';
+const subscribers = new Set<(resolved: Resolved) => void>();
+let observer: MutationObserver | undefined;
+let lastPalette = '';
+let resolved: Resolved = 'light';
 
-export type Resolved = 'light' | 'dark' | 'sepia' | 'claude';
-
-let _currentSetting: ThemeSetting = 'sync-ide';
-let _currentResolved: Resolved = 'light';
-const _subscribers = new Set<(resolved: Resolved) => void>();
-
-export function currentResolvedTheme(): Resolved {
-  return _currentResolved;
+export function currentResolvedTheme(): Resolved { return resolved; }
+export function subscribeThemeChanges(cb: (theme: Resolved) => void): () => void {
+  subscribers.add(cb);
+  return () => subscribers.delete(cb);
 }
 
-export function subscribeThemeChanges(cb: (resolved: Resolved) => void): () => void {
-  _subscribers.add(cb);
-  return () => _subscribers.delete(cb);
+/** Mermaid requires concrete hex colors, rather than CSS variable expressions. */
+function hexColor(value: string): string | undefined {
+  const v = value.trim();
+  if (/^#[\da-f]{6}$/i.test(v)) return v;
+  if (/^#[\da-f]{3}$/i.test(v)) return '#' + [...v.slice(1)].map(c => c + c).join('');
+  const rgb = v.match(/^rgba?\(\s*([\d.]+)[,\s]+([\d.]+)[,\s]+([\d.]+)/i);
+  const srgb = v.match(/^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)/i);
+  const channels = rgb ? rgb.slice(1, 4).map(Number)
+    : srgb ? srgb.slice(1, 4).map(n => Number(n) * 255) : undefined;
+  return channels ? '#' + channels.map(n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0')).join('') : undefined;
 }
 
-function notify(resolved: Resolved): void {
-  _currentResolved = resolved;
-  for (const cb of _subscribers) {
-    try { cb(resolved); } catch (err) { console.error('[md-editor-plus] theme subscriber failed', err); }
-  }
-}
-
-function isDarkOS(): boolean {
-  return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? false;
-}
-
-function isDarkIDE(): boolean {
-  const cl = document.body.classList;
-  return cl.contains('vscode-dark') || cl.contains('vscode-high-contrast-dark');
-}
-
-function resolveTheme(setting: ThemeSetting): Resolved {
-  if (setting === 'sepia')   return 'sepia';
-  if (setting === 'claude')  return 'claude';
-  if (setting === 'light')   return 'light';
-  if (setting === 'dark')    return 'dark';
-  if (setting === 'sync-os') return isDarkOS()  ? 'dark' : 'light';
-  return isDarkIDE() ? 'dark' : 'light';
-}
-
-export function applyTheme(setting: ThemeSetting): void {
-  if (setting === 'auto') setting = 'sync-ide';
-  _currentSetting = setting;
-  const resolved = resolveTheme(setting);
-  const html = document.documentElement;
-  html.classList.toggle('theme-dark',   resolved === 'dark');
-  html.classList.toggle('theme-sepia',  resolved === 'sepia');
-  html.classList.toggle('theme-claude', resolved === 'claude');
-  notify(resolved);
-}
-
-export function initTheme(setting: ThemeSetting): void {
-  applyTheme(setting);
-
-  const observer = new MutationObserver(() => {
-    if (_currentSetting === 'sync-ide') applyTheme('sync-ide');
-  });
-  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
-
-  const mq = window.matchMedia?.('(prefers-color-scheme: dark)');
-  if (mq) {
-    const onChange = (): void => {
-      if (_currentSetting === 'sync-os') applyTheme('sync-os');
-    };
-    if (typeof mq.addEventListener === 'function') {
-      mq.addEventListener('change', onChange);
-    } else if (typeof (mq as unknown as { addListener?: (cb: () => void) => void }).addListener === 'function') {
-      (mq as unknown as { addListener: (cb: () => void) => void }).addListener(onChange);
+export function readHostPalette() {
+  const style = getComputedStyle(document.body);
+  const color = (keys: string[], fallback: string): string => {
+    for (const key of keys) {
+      const value = hexColor(style.getPropertyValue(key));
+      if (value) return value;
     }
-  }
+    return fallback;
+  };
+  const background = color(['--vscode-editor-background'], hexColor(style.backgroundColor) ?? '#ffffff');
+  const foreground = color(['--vscode-editor-foreground', '--vscode-foreground'], hexColor(style.color) ?? '#000000');
+  return {
+    background, foreground,
+    surface: background,
+    border: color(['--vscode-widget-border', '--vscode-input-border', '--vscode-panel-border'], foreground),
+    accent: color(['--vscode-focusBorder', '--vscode-textLink-foreground'], foreground),
+    muted: color(['--vscode-descriptionForeground'], foreground),
+  };
 }
 
-export function cycleTheme(): ThemeSetting {
-  const next: Record<string, ThemeSetting> = {
-    'sync-ide': 'light',
-    'sync-os':  'light',
-    auto:       'light',
-    light:      'dark',
-    dark:       'sync-ide',
-    sepia:      'dark',
-    claude:     'dark',
+export function initTheme(): void {
+  if (observer) return;
+  const update = (): void => {
+    const palette = readHostPalette();
+    const key = JSON.stringify(palette);
+    if (key === lastPalette) return;
+    lastPalette = key;
+    const [r, g, b] = [1, 3, 5].map(i => parseInt(palette.background.slice(i, i + 2), 16));
+    resolved = (r * 299 + g * 587 + b * 114) / 1000 < 128 ? 'dark' : 'light';
+    document.documentElement.style.colorScheme = resolved;
+    for (const cb of subscribers) cb(resolved);
   };
-  const newSetting = next[_currentSetting] ?? 'light';
-  applyTheme(newSetting);
-  return newSetting;
+  update();
+  observer = new MutationObserver(update);
+  const options = { attributes: true, attributeFilter: ['class', 'style', 'data-vscode-theme-id'] };
+  observer.observe(document.body, options);
+  observer.observe(document.documentElement, options);
+}
+
+/** Preserve the current host palette when HTML leaves the VS Code webview. */
+export function snapshotHostTheme(): string {
+  const style = getComputedStyle(document.body);
+  const declarations: string[] = [];
+  for (let i = 0; i < style.length; i++) {
+    const name = style.item(i);
+    if (!/^--vscode-[\w-]+$/.test(name)) continue;
+    const value = style.getPropertyValue(name).replace(/[<>]/g, c => c === '<' ? '\\3c ' : '\\3e ');
+    declarations.push(`${name}:${value};`);
+  }
+  return `body {${declarations.join('')}}`;
 }

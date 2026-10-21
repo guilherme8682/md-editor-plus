@@ -1,21 +1,21 @@
 {
-  "name": "md-editor-plus",
-  "displayName": "MD Editor Plus",
-  "description": "Notion-style block editor for Markdown. Edit .md files inline with rich blocks, drag-to-reorder, slash commands, callouts, and polished light/dark themes.",
-  "version": "0.9.2",
-  "publisher": "AviranRevach",
+  "name": "md-editor-plus-lifeos",
+  "displayName": "MD Editor Plus — Life OS",
+  "description": "Editor Markdown visual por blocos com cores herdadas do VS Code. Fork pessoal do MD Editor Plus.",
+  "version": "0.9.3",
+  "publisher": "guilherme8682",
   "license": "MIT",
   "author": {
     "name": "Aviran Revach",
     "email": "aviran@atera.com"
   },
-  "homepage": "https://github.com/aviranrevach/md-editor-plus#readme",
+  "homepage": "https://github.com/guilherme8682/md-editor-plus#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/aviranrevach/md-editor-plus.git"
+    "url": "https://github.com/guilherme8682/md-editor-plus.git"
   },
   "bugs": {
-    "url": "https://github.com/aviranrevach/md-editor-plus/issues"
+    "url": "https://github.com/guilherme8682/md-editor-plus/issues"
   },
   "engines": {
     "vscode": "^1.74.0"
@@ -51,8 +51,8 @@
   "contributes": {
     "customEditors": [
       {
-        "viewType": "md-editor-plus.editor",
-        "displayName": "MD Editor Plus",
+        "viewType": "md-editor-plus-lifeos.editor",
+        "displayName": "MD Editor Plus — Life OS",
         "selector": [
           {
             "filenamePattern": "*.md"
@@ -75,41 +75,18 @@
     ],
     "commands": [
       {
-        "command": "mdEditorPlus.openSourceView",
-        "title": "MD Editor Plus: Open Source View"
+        "command": "mdEditorPlusLifeos.openSourceView",
+        "title": "MD Editor Plus — Life OS: Open Source View"
       },
       {
-        "command": "mdEditorPlus.openBlockView",
-        "title": "MD Editor Plus: Open Block View"
+        "command": "mdEditorPlusLifeos.openBlockView",
+        "title": "MD Editor Plus — Life OS: Open Block View"
       }
     ],
     "configuration": {
-      "title": "MD Editor Plus",
+      "title": "MD Editor Plus — Life OS",
       "properties": {
-        "mdEditorPlus.theme": {
-          "type": "string",
-          "enum": [
-            "light",
-            "sepia",
-            "claude",
-            "dark",
-            "sync-os",
-            "sync-ide",
-            "auto"
-          ],
-          "enumDescriptions": [
-            "Light — Notion-style white",
-            "Sepia — warm paper",
-            "Claude — soft warm tones",
-            "Dark — deep neutrals",
-            "Follow your operating system's light/dark mode",
-            "Follow your editor's color theme",
-            "(Legacy) Same as sync-ide"
-          ],
-          "default": "light",
-          "description": "Default color theme (saved via 'Save view as default')"
-        },
-        "mdEditorPlus.font": {
+        "mdEditorPlusLifeos.font": {
           "type": "string",
           "enum": [
             "sans",
@@ -119,7 +96,7 @@
           "default": "sans",
           "description": "Default font family"
         },
-        "mdEditorPlus.textSize": {
+        "mdEditorPlusLifeos.textSize": {
           "type": "string",
           "enum": [
             "s",
@@ -130,64 +107,49 @@
           "default": "m",
           "description": "Default text size"
         },
-        "mdEditorPlus.pageWidth": {
+        "mdEditorPlusLifeos.pageWidth": {
           "type": "number",
           "default": 800,
           "minimum": 400,
           "maximum": 2400,
           "description": "Default page width in pixels"
         },
-        "mdEditorPlus.fullWidth": {
+        "mdEditorPlusLifeos.fullWidth": {
           "type": "boolean",
           "default": false,
           "description": "Default to full window width"
         },
-        "mdEditorPlus.alwaysDarkCode": {
-          "type": "boolean",
-          "default": false,
-          "description": "Render code blocks with a dark background regardless of page theme"
-        },
-        "mdEditorPlus.alwaysDarkDiagram": {
-          "type": "boolean",
-          "default": false,
-          "description": "Render mermaid diagrams with a dark theme regardless of page theme"
-        },
-        "mdEditorPlus.alwaysDarkSource": {
-          "type": "boolean",
-          "default": false,
-          "description": "Render the raw source view with a dark background regardless of page theme"
-        },
-        "mdEditorPlus.sourceFullWidth": {
+        "mdEditorPlusLifeos.sourceFullWidth": {
           "type": "boolean",
           "default": false,
           "description": "Always render the source (Code) view at full window width"
         },
-        "mdEditorPlus.shortenCodeSnippets": {
+        "mdEditorPlusLifeos.shortenCodeSnippets": {
           "type": "boolean",
           "default": false,
           "description": "Collapse long code snippets to a preview with a Show more button"
         },
-        "mdEditorPlus.outlineVisible": {
+        "mdEditorPlusLifeos.outlineVisible": {
           "type": "boolean",
           "default": false,
           "description": "Show the outline panel (left gutter) by default"
         },
-        "mdEditorPlus.structureMapVisible": {
+        "mdEditorPlusLifeos.structureMapVisible": {
           "type": "boolean",
           "default": false,
           "description": "Show the structure map (right-edge navigation rail) by default"
         },
-        "mdEditorPlus.frontmatterVisible": {
+        "mdEditorPlusLifeos.frontmatterVisible": {
           "type": "boolean",
           "default": true,
           "description": "Show the frontmatter fields row above the document by default"
         },
-        "mdEditorPlus.sourceWordWrap": {
+        "mdEditorPlusLifeos.sourceWordWrap": {
           "type": "boolean",
           "default": false,
           "description": "Wrap long lines in the Code (source) view instead of horizontal scrolling"
         },
-        "mdEditorPlus.smartTypography": {
+        "mdEditorPlusLifeos.smartTypography": {
           "type": "boolean",
           "default": true,
           "description": "Smart typography: replace typed sequences like -> with arrows (→), -- with em dash (—), ... with ellipsis (…) as you type. Suppressed inside code."

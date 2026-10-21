@@ -5,7 +5,7 @@ export function activate(context: vscode.ExtensionContext): void {
   context.subscriptions.push(MdEditorPlusProvider.register(context));
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('mdEditorPlus.openSourceView', async () => {
+    vscode.commands.registerCommand('mdEditorPlusLifeos.openSourceView', async () => {
       const activeTabInput = vscode.window.tabGroups.activeTabGroup.activeTab?.input;
       if (!activeTabInput || typeof activeTabInput !== 'object' || !('uri' in activeTabInput)) return;
       await vscode.commands.executeCommand(
@@ -17,13 +17,13 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('mdEditorPlus.openBlockView', async () => {
+    vscode.commands.registerCommand('mdEditorPlusLifeos.openBlockView', async () => {
       const activeTabInput = vscode.window.tabGroups.activeTabGroup.activeTab?.input;
       if (!activeTabInput || typeof activeTabInput !== 'object' || !('uri' in activeTabInput)) return;
       await vscode.commands.executeCommand(
         'vscode.openWith',
         (activeTabInput as { uri: vscode.Uri }).uri,
-        'md-editor-plus.editor'
+        'md-editor-plus-lifeos.editor'
       );
     })
   );

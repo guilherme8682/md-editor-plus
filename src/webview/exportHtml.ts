@@ -1,10 +1,11 @@
-import lightCss from './styles/notion-light.css';
-import darkCss from './styles/notion-dark.css';
+import themeCss from './styles/vscode-theme.css';
 import editorCss from './styles/editor.css';
 import katexCss from 'katex/dist/katex.min.css';
+import { snapshotHostTheme } from './theme';
+import boardCss from './styles/board.css';
 import { unresolveImageSrc } from './mediaResolve';
 
-const BUNDLED_CSS = lightCss + '\n' + darkCss + '\n' + katexCss + '\n' + editorCss;
+const BUNDLED_CSS = katexCss + '\n' + editorCss + '\n' + boardCss + '\n' + themeCss;
 
 const EXPORT_CSS = `
 /* Standalone export adjustments */
@@ -140,6 +141,7 @@ export function buildHtmlExport(
 <title>${escapeHtml(ctx.filename)}</title>
 <style>
 ${BUNDLED_CSS}
+${snapshotHostTheme()}
 ${EXPORT_CSS}
 .export-page { ${widthStyle} }
 </style>

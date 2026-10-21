@@ -1,5 +1,4 @@
-import lightCss from './styles/notion-light.css';
-import darkCss from './styles/notion-dark.css';
+import themeCss from './styles/vscode-theme.css';
 import editorCss from './styles/editor.css';
 import boardCss from './styles/board.css';
 import katexCss from 'katex/dist/katex.min.css';
@@ -9,8 +8,7 @@ import { buildConflictDiffPanel } from './conflictDiffView';
 import { decideExternalUpdate } from './syncGuard';
 import { merge3 } from './merge3';
 import { createFindBar, FindBar } from './findBar';
-import { initTheme, applyTheme, ThemeSetting } from './theme';
-import { setAlwaysDarkDiagram } from './mermaidRenderer';
+import { initTheme } from './theme';
 import { setSmartTypographyEnabled } from './extensions/smartTypography';
 import { initTooltips } from './tooltip';
 import { buildHtmlExport } from './exportHtml';
@@ -76,14 +74,10 @@ const vscode = acquireVsCodeApi();
 (window as unknown as { __mdViewerVscode?: typeof vscode }).__mdViewerVscode = vscode;
 
 interface SavedDefaults {
-  theme?: ThemeSetting;
   font?: FontKind;
   textSize?: TextSize;
   pageWidth?: number;
   fullWidth?: boolean;
-  alwaysDarkCode?: boolean;
-  alwaysDarkDiagram?: boolean;
-  alwaysDarkSource?: boolean;
   sourceFullWidth?: boolean;
   shortenCodeSnippets?: boolean;
   smartTypography?: boolean;
@@ -111,27 +105,23 @@ const SNAP_STOPS = [600, 800, 1000, 1200, 1400];
 const SNAP_THRESHOLD_PX = 30;
 
 const FACTORY_DEFAULTS = {
-  theme:               'light' as ThemeSetting,
   font:                'sans'  as FontKind,
   textSize:            'm'     as TextSize,
   pageWidth:           DEFAULT_WIDTH_PX,
   fullWidth:           false,
-  alwaysDarkCode:      false,
-  alwaysDarkDiagram:   false,
-  alwaysDarkSource:    false,
   sourceFullWidth:     false,
   shortenCodeSnippets: false,
   smartTypography:     true,
 };
 
 const DEFAULT_KEYS = [
-  'theme', 'font', 'textSize', 'pageWidth', 'fullWidth',
-  'alwaysDarkCode', 'alwaysDarkDiagram', 'alwaysDarkSource', 'sourceFullWidth', 'shortenCodeSnippets', 'smartTypography',
+  'font', 'textSize', 'pageWidth', 'fullWidth',
+  'sourceFullWidth', 'shortenCodeSnippets', 'smartTypography',
 ] as const;
 
 function injectStyles(): void {
   const style = document.createElement('style');
-  style.textContent = lightCss + darkCss + katexCss + editorCss + boardCss;
+  style.textContent = katexCss + editorCss + boardCss + themeCss;
   document.head.appendChild(style);
 }
 
@@ -145,6 +135,7 @@ function normalizeMd(s: string): string {
 
 function init(): void {
   injectStyles();
+  initTheme();
   initTooltips();
 
   const editorEl       = document.getElementById('editor')!;
@@ -175,7 +166,6 @@ function init(): void {
   }
 
   const viewBtns  = Array.from(document.querySelectorAll<HTMLButtonElement>('#view-seg .seg-btn'));
-  const themeBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('#theme-seg .seg-btn'));
   const fontBtns  = Array.from(document.querySelectorAll<HTMLButtonElement>('#font-seg .seg-btn'));
   const textBtns  = Array.from(document.querySelectorAll<HTMLButtonElement>('#text-seg .seg-btn'));
 
@@ -189,9 +179,6 @@ function init(): void {
   const sliderRow     = document.getElementById('custom-slider-row') as HTMLElement;
   const pageWidthRow  = document.getElementById('page-width-row') as HTMLElement;
 
-  const alwaysDarkCodeToggle = document.getElementById('always-dark-code-toggle') as HTMLElement;
-  const alwaysDarkDiagramToggle = document.getElementById('always-dark-diagram-toggle') as HTMLElement;
-  const alwaysDarkSourceToggle = document.getElementById('always-dark-source-toggle') as HTMLElement;
   const sourceFullWidthToggle = document.getElementById('source-full-width-toggle') as HTMLElement;
   const shortenSnippetsToggle = document.getElementById('shorten-snippets-toggle') as HTMLElement;
   const smartTypographyToggle = document.getElementById('smart-typography-toggle') as HTMLElement;
@@ -217,30 +204,6 @@ function init(): void {
     roController.set(on);
   }
 
-  function setAlwaysDarkCode(on: boolean): void {
-    document.documentElement.classList.toggle('code-always-dark', on);
-    alwaysDarkCodeToggle.classList.toggle('on', on);
-    alwaysDarkCodeToggle.setAttribute('aria-checked', String(on));
-    refreshDefaultsButtons();
-  }
-
-  function setAlwaysDarkDiagramState(on: boolean): void {
-    document.documentElement.classList.toggle('diagram-always-dark', on);
-    alwaysDarkDiagramToggle.classList.toggle('on', on);
-    alwaysDarkDiagramToggle.setAttribute('aria-checked', String(on));
-    setAlwaysDarkDiagram(on);
-    refreshDefaultsButtons();
-  }
-
-  function setAlwaysDarkSource(on: boolean): void {
-    document.documentElement.classList.toggle('source-always-dark', on);
-    alwaysDarkSourceToggle.classList.toggle('on', on);
-    alwaysDarkSourceToggle.setAttribute('aria-checked', String(on));
-    // If we're already in source mode, the page-level dark needs to refresh too.
-    applyThemeState();
-    refreshDefaultsButtons();
-  }
-
   function setSourceFullWidth(on: boolean): void {
     document.documentElement.classList.toggle('source-full-width', on);
     sourceFullWidthToggle.classList.toggle('on', on);
@@ -263,15 +226,6 @@ function init(): void {
     refreshDefaultsButtons();
   }
 
-  alwaysDarkCodeToggle.addEventListener('click', () => {
-    setAlwaysDarkCode(!alwaysDarkCodeToggle.classList.contains('on'));
-  });
-  alwaysDarkDiagramToggle.addEventListener('click', () => {
-    setAlwaysDarkDiagramState(!alwaysDarkDiagramToggle.classList.contains('on'));
-  });
-  alwaysDarkSourceToggle.addEventListener('click', () => {
-    setAlwaysDarkSource(!alwaysDarkSourceToggle.classList.contains('on'));
-  });
   sourceFullWidthToggle.addEventListener('click', () => {
     setSourceFullWidth(!sourceFullWidthToggle.classList.contains('on'));
   });
@@ -494,8 +448,6 @@ function init(): void {
       sourceEl.style.display = 'none';
     }
 
-    // Re-evaluate theme so the source-mode dark override takes effect / clears.
-    applyThemeState();
 
     if (!sourceMode) {
       // Re-sync the editor's content with the source-of-truth markdown when
@@ -647,57 +599,8 @@ function init(): void {
 
   pageWidthRow.addEventListener('click', exitFullWidth);
 
-  type ManualTheme = 'light' | 'sepia' | 'claude' | 'dark';
-  type SyncMode = 'off' | 'os' | 'ide';
-  const themeSeg = document.getElementById('theme-seg') as HTMLElement;
-  const syncSeg  = document.getElementById('sync-seg')  as HTMLElement;
-  const syncBtns = Array.from(syncSeg.querySelectorAll<HTMLButtonElement>('.seg-btn'));
-  let manualTheme: ManualTheme = 'light';
-  let syncMode: SyncMode = 'off';
-
-  function applyThemeState(): void {
-    // When in code/source view and "Always dark: Code view" is on, force the
-    // entire page into dark mode regardless of the user's selected theme.
-    const sourceForcesDark =
-      sourceMode && document.documentElement.classList.contains('source-always-dark');
-    if (sourceForcesDark) applyTheme('dark');
-    else if (syncMode === 'os')  applyTheme('sync-os');
-    else if (syncMode === 'ide') applyTheme('sync-ide');
-    else applyTheme(manualTheme);
-    segActivate(themeBtns, 'theme', manualTheme);
-    segActivate(syncBtns,  'sync',  syncMode);
-    themeSeg.classList.toggle('disabled', syncMode !== 'off' || sourceForcesDark);
-    refreshDefaultsButtons();
-  }
-
-  function setManualTheme(theme: ManualTheme): void {
-    manualTheme = theme;
-    syncMode = 'off';
-    applyThemeState();
-  }
-
-  function setSyncMode(mode: SyncMode): void {
-    syncMode = mode;
-    applyThemeState();
-  }
-
-  function loadInitialTheme(setting: ThemeSetting): void {
-    if (setting === 'auto' || setting === 'sync-ide') {
-      syncMode = 'ide';
-    } else if (setting === 'sync-os') {
-      syncMode = 'os';
-    } else {
-      syncMode = 'off';
-      manualTheme = setting;
-    }
-    applyThemeState();
-  }
-
-  syncBtns.forEach(b => b.addEventListener('click', () => setSyncMode(b.dataset.sync as SyncMode)));
-
   // Wire up clicks
   viewBtns.forEach(b  => b.addEventListener('click', () => setView(b.dataset.view as 'preview' | 'source')));
-  themeBtns.forEach(b => b.addEventListener('click', () => setManualTheme(b.dataset.theme as ManualTheme)));
   fontBtns.forEach(b  => b.addEventListener('click', () => setFont(b.dataset.font as FontKind)));
   textBtns.forEach(b  => b.addEventListener('click', () => setTextSize(b.dataset.text as TextSize)));
 
@@ -883,8 +786,7 @@ function init(): void {
     pageWidthPx: number;
     fullWidth: boolean;
   } {
-    const themeClasses = ['theme-dark', 'theme-sepia', 'theme-claude']
-      .filter((c) => document.documentElement.classList.contains(c));
+    const themeClasses: string[] = [];
     const editorClasses = Array.from(editorEl.classList)
       .filter((c) => c.startsWith('font-') || c.startsWith('text-') || c.startsWith('width-'));
     const fnEl = document.getElementById('toolbar-filename');
@@ -1015,17 +917,12 @@ function init(): void {
   });
 
   function applyDefaults(d: SavedDefaults): void {
-    initTheme(d.theme ?? 'light');
-    loadInitialTheme(d.theme ?? 'light');
     setFont(d.font ?? 'sans');
     setTextSize(d.textSize ?? 'm');
     const px = typeof d.pageWidth === 'number' ? d.pageWidth : DEFAULT_WIDTH_PX;
     widthSlider.value = String(px);
     applyPageWidth();
     setWidth(d.fullWidth ? 'full' : 'normal');
-    setAlwaysDarkCode(Boolean(d.alwaysDarkCode));
-    setAlwaysDarkDiagramState(Boolean(d.alwaysDarkDiagram));
-    setAlwaysDarkSource(Boolean(d.alwaysDarkSource));
     setSourceFullWidth(Boolean(d.sourceFullWidth));
     setShortenSnippets(Boolean(d.shortenCodeSnippets));
     setSmartTypography(d.smartTypography ?? true); // default ON (unlike the Boolean()-defaulted toggles above)
@@ -1076,16 +973,10 @@ function init(): void {
 
   function currentDefaults(): SavedDefaults {
     return {
-      theme:               (syncMode === 'os' ? 'sync-os'
-                            : syncMode === 'ide' ? 'sync-ide'
-                            : manualTheme) as ThemeSetting,
       font:                (FONT_CLASSES.find(c => editorEl.classList.contains(c))?.replace('font-', '') as FontKind) ?? 'sans',
       textSize:            (TEXT_CLASSES.find(c => editorEl.classList.contains(c))?.replace('text-', '') as TextSize) ?? 'm',
       pageWidth:           parseInt(widthSlider.value, 10) || DEFAULT_WIDTH_PX,
       fullWidth:           widthMode === 'full',
-      alwaysDarkCode:      alwaysDarkCodeToggle.classList.contains('on'),
-      alwaysDarkDiagram:   alwaysDarkDiagramToggle.classList.contains('on'),
-      alwaysDarkSource:    alwaysDarkSourceToggle.classList.contains('on'),
       sourceFullWidth:     sourceFullWidthToggle.classList.contains('on'),
       shortenCodeSnippets: shortenSnippetsToggle.classList.contains('on'),
       smartTypography:     smartTypographyToggle.classList.contains('on'),

@@ -1,3 +1,4 @@
+import { currentResolvedTheme } from './theme';
 // DOM overlays for the visual mermaid editor. Pure DOM — no ProseMirror, no
 // mermaid library knowledge. Talks to mermaidVisualEdit through callbacks.
 //
@@ -3427,7 +3428,7 @@ function gridSpacingForScale(scale: number): number {
 function installDotGrid(host: HTMLElement): void {
   const svg = host.querySelector<SVGSVGElement>('.mb-svg-host svg');
   if (!svg) return;
-  const dark = document.documentElement.classList.contains('theme-dark');
+  const dark = currentResolvedTheme() === 'dark';
   const dotColor = dark ? 'rgba(255, 255, 255, 0.22)' : 'rgba(0, 0, 0, 0.28)';
   const vb = svg.viewBox?.baseVal;
   if (!vb || !isFinite(vb.width) || vb.width <= 0) return;

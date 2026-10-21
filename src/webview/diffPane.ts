@@ -1,6 +1,5 @@
 import editorCss from './styles/editor.css';
-import lightCss from './styles/notion-light.css';
-import darkCss from './styles/notion-dark.css';
+import themeCss from './styles/vscode-theme.css';
 import boardCss from './styles/board.css';
 import diffCss from './styles/diff.css';
 import katexCss from 'katex/dist/katex.min.css';
@@ -134,7 +133,7 @@ function applyTint(): void {
 
 function injectStyles(): void {
   const style = document.createElement('style');
-  style.textContent = `${lightCss}\n${darkCss}\n${katexCss}\n${editorCss}\n${boardCss}\n${diffCss}`;
+  style.textContent = `${katexCss}\n${editorCss}\n${boardCss}\n${diffCss}\n${themeCss}`;
   document.head.appendChild(style);
 }
 

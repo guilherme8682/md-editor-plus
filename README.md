@@ -1,5 +1,7 @@
 # MD Editor Plus
 
+> **Fork mantido por Guilherme Rocha:** base para customizações pessoais do editor Markdown no VS Code. Consulte [FORK.md](FORK.md) para propósito, origem e orientações de desenvolvimento. O projeto original é [aviranrevach/md-editor-plus](https://github.com/aviranrevach/md-editor-plus).
+
 **Notion-style markdown block editor / viewer for Visual Studio Code, Cursor etc.**
 
 Open any Markdown file and it renders as polished, block-based content. Click anywhere to edit, drag blocks to reorder, slash to insert. Your file stays plain Markdown on disk, so it works with every other tool in your pipeline.

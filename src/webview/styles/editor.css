@@ -56,19 +56,6 @@ body {
 
 .toolbar-spacer { flex: 1; }
 
-.toolbar-logo {
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  line-height: 0;
-  margin-right: 2px;
-}
-.toolbar-logo svg {
-  display: block;
-  height: 32px;
-  width: auto;
-}
-
 .toolbar-filename {
   position: absolute;
   left: 50%;
@@ -175,14 +162,6 @@ body {
     padding: 0;
   }
 
-  /* Logo: a touch smaller so the rest of the row fits more comfortably.
-     Add a left margin so it doesn't sit flush against the toolbar edge,
-     and trim the right margin so it's not cramped *or* over-spaced. */
-  .toolbar-logo {
-    margin-left: 6px;
-    margin-right: 2px;
-  }
-  .toolbar-logo svg { height: 26px; }
 
   /* Filename: switch from absolute-centered to flow-positioned so it
      sits flush-left after the view-toggle, then tighten max-width so

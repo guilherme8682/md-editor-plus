@@ -133,7 +133,6 @@ The toolbar fades to 50% opacity when your cursor isn't near it, so it stays out
 
 | Element | Behavior |
 | --- | --- |
-| **Logo** | Icon for the extension. |
 | **Preview / Code** | Switch between the rendered block view and the raw Markdown view. The active button shows its label (`Preview` or `Code`). |
 | **Outline** | **Click** to toggle the heading outline tree (also ⌘⇧O). |
 | **Structure map** | **Click** to toggle the right-edge navigation rail — heading ticks plus a draggable viewport box. |

@@ -2,7 +2,7 @@
   "name": "md-editor-plus-lifeos",
   "displayName": "MD Editor Plus — Life OS",
   "description": "Editor Markdown visual por blocos com cores herdadas do VS Code. Fork pessoal do MD Editor Plus.",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "publisher": "guilherme8682",
   "license": "MIT",
   "author": {
